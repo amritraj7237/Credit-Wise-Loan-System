@@ -82,8 +82,24 @@ if st.button("🔍 Predict Loan Approval", use_container_width=True):
 
     # Combine & scale
     final_input = pd.concat([base.reset_index(drop=True),
-                              encoded_df.reset_index(drop=True)], axis=1)
-    scaled      = scaler.transform(final_input)
+                          encoded_df.reset_index(drop=True)], axis=1)
+
+# Fix column order to exactly match training data
+correct_order = [
+    "Coapplicant_Income", "Age", "Dependents", "Existing_Loans",
+    "Savings", "Collateral_Value", "Loan_Amount", "Loan_Term",
+    "Education_Level",
+    "Employment_Status_Salaried", "Employment_Status_Self-employed",
+    "Employment_Status_Unemployed", "Marital_Status_Single",
+    "Loan_Purpose_Car", "Loan_Purpose_Education", "Loan_Purpose_Home",
+    "Loan_Purpose_Personal", "Property_Area_Semiurban", "Property_Area_Urban",
+    "Gender_Male", "Employer_Category_Government", "Employer_Category_MNC",
+    "Employer_Category_Private", "Employer_Category_Unemployed",
+    "DTI_ratio_sq", "Credit_Score_sq", "Applicant_Income_log"
+]
+
+final_input = final_input[correct_order]
+scaled      = scaler.transform(final_input)
 
     # Predict
     prediction  = model.predict(scaled)[0]
