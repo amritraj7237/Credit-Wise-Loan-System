@@ -51,13 +51,13 @@ employer_category = st.selectbox("Employer Category", ["Government", "MNC", "Pri
 # Predict button
 if st.button("🔍 Predict Loan Approval", use_container_width=True):
 
-    # Feature engineering (matches your notebook 8)
+    # Feature engineering
     dti_sq      = dti_ratio ** 2
     credit_sq   = credit_score ** 2
     income_log  = np.log1p(applicant_income)
     edu_encoded = 1 if education_level == "Not Graduate" else 0
 
-    # One-Hot Encoding (matches your notebook 4)
+    # One-Hot Encoding
     cat_input = pd.DataFrame([[employment_status, marital_status, loan_purpose,
                                 property_area, gender, employer_category]],
                               columns=["Employment_Status", "Marital_Status",
@@ -78,37 +78,38 @@ if st.button("🔍 Predict Loan Approval", use_container_width=True):
                          columns=["Coapplicant_Income", "Age", "Dependents",
                                   "Existing_Loans", "Savings", "Collateral_Value",
                                   "Loan_Amount", "Loan_Term", "Education_Level",
-                                  "DTI_ratio_sq", "Credit_Score_sq", "Applicant_Income_log"])
+                                  "DTI_ratio_sq", "Credit_Score_sq",
+                                  "Applicant_Income_log"])
 
-    # Combine & scale
+    # Combine
     final_input = pd.concat([base.reset_index(drop=True),
-                          encoded_df.reset_index(drop=True)], axis=1)
+                              encoded_df.reset_index(drop=True)], axis=1)
 
-# Fix column order to exactly match training data
-correct_order = [
-    "Coapplicant_Income", "Age", "Dependents", "Existing_Loans",
-    "Savings", "Collateral_Value", "Loan_Amount", "Loan_Term",
-    "Education_Level",
-    "Employment_Status_Salaried", "Employment_Status_Self-employed",
-    "Employment_Status_Unemployed", "Marital_Status_Single",
-    "Loan_Purpose_Car", "Loan_Purpose_Education", "Loan_Purpose_Home",
-    "Loan_Purpose_Personal", "Property_Area_Semiurban", "Property_Area_Urban",
-    "Gender_Male", "Employer_Category_Government", "Employer_Category_MNC",
-    "Employer_Category_Private", "Employer_Category_Unemployed",
-    "DTI_ratio_sq", "Credit_Score_sq", "Applicant_Income_log"
-]
+    # Fix column order  ← MUST be inside the if block
+    correct_order = [
+        "Coapplicant_Income", "Age", "Dependents", "Existing_Loans",
+        "Savings", "Collateral_Value", "Loan_Amount", "Loan_Term",
+        "Education_Level",
+        "Employment_Status_Salaried", "Employment_Status_Self-employed",
+        "Employment_Status_Unemployed", "Marital_Status_Single",
+        "Loan_Purpose_Car", "Loan_Purpose_Education", "Loan_Purpose_Home",
+        "Loan_Purpose_Personal", "Property_Area_Semiurban", "Property_Area_Urban",
+        "Gender_Male", "Employer_Category_Government", "Employer_Category_MNC",
+        "Employer_Category_Private", "Employer_Category_Unemployed",
+        "DTI_ratio_sq", "Credit_Score_sq", "Applicant_Income_log"
+    ]
 
-final_input = final_input[correct_order]
-scaled      = scaler.transform(final_input)
+    final_input = final_input[correct_order]
+    scaled      = scaler.transform(final_input)
 
-# Predict
-prediction  = model.predict(scaled)[0]
-probability = model.predict_proba(scaled)[0]
+    # Predict
+    prediction  = model.predict(scaled)[0]
+    probability = model.predict_proba(scaled)[0]
 
-st.divider()
-if prediction == 1:
-    st.success(f"✅ Loan APPROVED — Confidence: {probability[1]*100:.1f}%")
-else:
-    st.error(f"❌ Loan REJECTED — Confidence: {probability[0]*100:.1f}%")
+    st.divider()
+    if prediction == 1:
+        st.success(f"✅ Loan APPROVED — Confidence: {probability[1]*100:.1f}%")
+    else:
+        st.error(f"❌ Loan REJECTED — Confidence: {probability[0]*100:.1f}%")
 
     st.caption("Model: Logistic Regression | Accuracy: 89%")
