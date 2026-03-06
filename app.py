@@ -101,14 +101,14 @@ correct_order = [
 final_input = final_input[correct_order]
 scaled      = scaler.transform(final_input)
 
-    # Predict
-    prediction  = model.predict(scaled)[0]
-    probability = model.predict_proba(scaled)[0]
+# Predict
+prediction  = model.predict(scaled)[0]
+probability = model.predict_proba(scaled)[0]
 
-    st.divider()
-    if prediction == 1:
-        st.success(f"✅ Loan APPROVED — Confidence: {probability[1]*100:.1f}%")
-    else:
-        st.error(f"❌ Loan REJECTED — Confidence: {probability[0]*100:.1f}%")
+st.divider()
+if prediction == 1:
+    st.success(f"✅ Loan APPROVED — Confidence: {probability[1]*100:.1f}%")
+else:
+    st.error(f"❌ Loan REJECTED — Confidence: {probability[0]*100:.1f}%")
 
     st.caption("Model: Logistic Regression | Accuracy: 89%")
