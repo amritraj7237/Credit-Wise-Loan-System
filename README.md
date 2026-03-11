@@ -2,6 +2,8 @@
 
 > An intelligent ML-powered loan approval system for SecureTrust Bank
 
+🔗 Live Demo: https://credit-wise-loan-system-dsxucsbdgqhctk4vk6xcx3.streamlit.app/
+
 ---
 
 ## 📌 Problem Statement
